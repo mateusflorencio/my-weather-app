@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Search,
+/* eslint-disable react/prop-types */
+import {
+  Search,
   Cloud,
   Sun,
   CloudRain,
@@ -10,110 +11,81 @@ import { Search,
   Sunrise,
   Sunset,
   CloudLightning,
-  MapPin,
   Loader2Icon,
-} from 'lucide-react';
-import { getWeatherByLocation, getWeatherData } from '../api/weather'
+} from "lucide-react";
+import { getWeatherData } from "../api/weather";
 
-const WeatherDashboard = () => {
-  const [city, setCity] = useState('');
-  const [weatherData, setWeatherData] = useState(null);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
+const WeatherDashboard = ({
+  city,
+  setCity,
+  weatherData,
+  setWeatherData,
+  error,
+  setError,
+  loading,
+  setLoading,
+}) => {
   // Buscar clima por cidade
   const handleSearch = async () => {
     try {
       setLoading(true);
-      setError('');
+      setError("");
       const data = await getWeatherData(city);
       setWeatherData(data);
 
       console.log(data);
     } catch {
-      setError('Não foi possível encontrar a cidade');
+      setError("Não foi possível encontrar a cidade");
       setWeatherData(null);
     } finally {
       setLoading(false);
     }
   };
 
-  // Buscar clima por localização atual
-  const handleGetCurrentLocation = () => {
-    console.log('Buscando localização...');
-    if ("geolocation" in navigator) {
-      setLoading(true);
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const { latitude, longitude } = position.coords;
-            const data = await getWeatherByLocation(latitude, longitude);
-            setCity('Sua localização');
-            setWeatherData(data);
-            setError('');
-          } catch {
-            setError('Erro ao obter dados da localização');
-          } finally {
-            setLoading(false);
-          }
-        },
-        () => {
-          setError('Erro ao obter localização');
-          setLoading(false);
-        }
-      );
-    } else {
-      setError('Geolocalização não suportada pelo navegador');
-    }
-  };
-
-  // Carregar localização atual ao iniciar
-  useEffect(() => {
-    handleGetCurrentLocation();
-  }, []);
-
   const getWeatherIcon = (condition, size = 8) => {
     const iconProps = { className: `w-${size} h-${size}` };
     switch (condition) {
-      case 'sunny':
-        return <Sun {...iconProps} className={`${iconProps.className} text-yellow-500`} />;
-      case 'rainy':
-        return <CloudRain {...iconProps} className={`${iconProps.className} text-blue-500`} />;
-      case 'cloudy':
-        return <Cloud {...iconProps} className={`${iconProps.className} text-gray-500`} />;
-      case 'storm':
-        return <CloudLightning {...iconProps} className={`${iconProps.className} text-gray-600`} />;
+      case "sunny":
+        return (
+          <Sun
+            {...iconProps}
+            className={`${iconProps.className} text-yellow-500`}
+          />
+        );
+      case "rainy":
+        return (
+          <CloudRain
+            {...iconProps}
+            className={`${iconProps.className} text-blue-500`}
+          />
+        );
+      case "cloudy":
+        return (
+          <Cloud
+            {...iconProps}
+            className={`${iconProps.className} text-gray-500`}
+          />
+        );
+      case "storm":
+        return (
+          <CloudLightning
+            {...iconProps}
+            className={`${iconProps.className} text-gray-600`}
+          />
+        );
       default:
-        return <Sun {...iconProps} className={`${iconProps.className} text-yellow-500`} />;
+        return (
+          <Sun
+            {...iconProps}
+            className={`${iconProps.className} text-yellow-500`}
+          />
+        );
     }
   };
 
   return (
     <div className="min-h-screen w-screen bg-gradient-to-br from-blue-50 to-blue-100">
       {/* Header com Logo e Nome */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="flex items-center gap-2">
-                  <Cloud className="w-8 h-8 text-blue-600" />
-                  <span className="text-2xl font-bold text-gray-800">WeatherNow</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => handleGetCurrentLocation()}
-                className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors bg-blue-400 px-3 py-2 rounded-lg shadow-sm"
-              >
-                <MapPin className="w-5 h-5" />
-                <span>Usar minha localização</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
 
       <main className="max-w-7xl mx-auto p-8">
         {/* Barra de Busca */}
@@ -132,16 +104,14 @@ const WeatherDashboard = () => {
               onClick={handleSearch}
               disabled={loading}
               className={`bg-blue-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-sm ${
-                loading ? 'opacity-75 cursor-not-allowed' : ''
+                loading ? "opacity-75 cursor-not-allowed" : ""
               }`}
             >
               <Search className="w-5 h-5" />
-              {loading ? 'Buscando...' : 'Buscar'}
+              {loading ? "Buscando..." : "Buscar"}
             </button>
           </div>
-          {error && (
-            <div className="mt-3 text-red-500">{error}</div>
-          )}
+          {error && <div className="mt-3 text-red-500">{error}</div>}
         </div>
 
         {weatherData && !loading && (
@@ -151,10 +121,16 @@ const WeatherDashboard = () => {
               <div className="flex justify-between items-start mb-8">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-800">{city}</h2>
-                  <p className="text-gray-600 mt-1">{weatherData.description}</p>
+                  <p className="text-gray-600 mt-1">
+                    {weatherData.description}
+                  </p>
                   <div className="flex items-baseline mt-4">
-                    <span className="text-6xl font-bold text-gray-800">{weatherData.temp}°</span>
-                    <span className="text-gray-500 ml-4">Sensação térmica: {weatherData.feelsLike}°</span>
+                    <span className="text-6xl font-bold text-gray-800">
+                      {weatherData.temp}°
+                    </span>
+                    <span className="text-gray-500 ml-4">
+                      Sensação térmica: {weatherData.feelsLike}°
+                    </span>
                   </div>
                 </div>
                 <div className="text-right">
@@ -164,13 +140,20 @@ const WeatherDashboard = () => {
 
               {/* Previsão por Hora */}
               <div className="mb-8">
-                <h3 className="text-lg font-semibold mb-4">Previsão por Hora</h3>
+                <h3 className="text-lg font-semibold mb-4">
+                  Previsão por Hora
+                </h3>
                 <div className="grid grid-cols-5 gap-4">
                   {weatherData.hourlyForecast.map((hour) => (
-                    <div key={hour.hour} className="bg-gray-50 rounded-lg p-4 text-center">
+                    <div
+                      key={hour.hour}
+                      className="bg-gray-50 rounded-lg p-4 text-center"
+                    >
                       <p className="text-gray-600 mb-2">{hour.hour}</p>
                       {getWeatherIcon(hour.condition, 6)}
-                      <p className="text-lg font-semibold mt-2 text-gray-600">{hour.temp}°</p>
+                      <p className="text-lg font-semibold mt-2 text-gray-600">
+                        {hour.temp}°
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -182,15 +165,21 @@ const WeatherDashboard = () => {
                 <div className="grid grid-cols-5 gap-4">
                   {weatherData.forecast.map((day) => (
                     <div key={day.day} className="bg-gray-50 rounded-lg p-4">
-                      <p className="font-medium text-gray-800 mb-2">{day.day}</p>
+                      <p className="font-medium text-gray-800 mb-2">
+                        {day.day}
+                      </p>
                       <div className="flex justify-center mb-2">
                         {getWeatherIcon(day.condition, 6)}
                       </div>
                       <div className="text-sm">
-                        <p className="font-semibold text-gray-800">{day.maxTemp}°</p>
+                        <p className="font-semibold text-gray-800">
+                          {day.maxTemp}°
+                        </p>
                         <p className="text-gray-500">{day.minTemp}°</p>
                       </div>
-                      <p className="text-sm text-blue-500 mt-1">{day.precipitation}%</p>
+                      <p className="text-sm text-blue-500 mt-1">
+                        {day.precipitation}%
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -201,61 +190,79 @@ const WeatherDashboard = () => {
             <div className="col-span-12 lg:col-span-4 space-y-6">
               {/* Detalhes do Clima */}
               <div className="bg-white rounded-xl shadow-md p-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-600">Detalhes</h3>
+                <h3 className="text-lg font-semibold mb-4 text-gray-600">
+                  Detalhes
+                </h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Droplets className="w-5 h-5 text-blue-500" />
                       <span className="text-gray-600">Umidade</span>
                     </div>
-                    <span className="font-semibold text-gray-600">{weatherData.humidity}%</span>
+                    <span className="font-semibold text-gray-600">
+                      {weatherData.humidity}%
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Wind className="w-5 h-5 text-blue-500" />
                       <span className="text-gray-600">Vento</span>
                     </div>
-                    <span className="font-semibold text-gray-600">{weatherData.windSpeed} km/h</span>
+                    <span className="font-semibold text-gray-600">
+                      {weatherData.windSpeed} km/h
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Navigation className="w-5 h-5 text-blue-500" />
                       <span className="text-gray-600">Direção</span>
                     </div>
-                    <span className="font-semibold text-gray-600">{weatherData.windDirection}</span>
+                    <span className="font-semibold text-gray-600">
+                      {weatherData.windDirection}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Thermometer className="w-5 h-5 text-blue-500" />
                       <span className="text-gray-600">Pressão</span>
                     </div>
-                    <span className="font-semibold text-gray-600">{weatherData.pressure} hPa</span>
+                    <span className="font-semibold text-gray-600">
+                      {weatherData.pressure} hPa
+                    </span>
                   </div>
                 </div>
               </div>
 
               {/* Sol e Visibilidade */}
               <div className="bg-white rounded-xl shadow-md p-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-600">Sol & Visibilidade</h3>
+                <h3 className="text-lg font-semibold mb-4 text-gray-600">
+                  Sol & Visibilidade
+                </h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Sunrise className="w-5 h-5 text-orange-500" />
                       <span className="text-gray-600">Nascer do Sol</span>
                     </div>
-                    <span className="font-semibold text-gray-600">{weatherData.sunrise}</span>
+                    <span className="font-semibold text-gray-600">
+                      {weatherData.sunrise}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Sunset className="w-5 h-5 text-orange-500" />
                       <span className="text-gray-600">Pôr do Sol</span>
                     </div>
-                    <span className="font-semibold text-gray-600">{weatherData.sunset}</span>
+                    <span className="font-semibold text-gray-600">
+                      {weatherData.sunset}
+                    </span>
                   </div>
                   <div className="mt-2 pt-2 border-t">
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600">Visibilidade</span>
-                      <span className="font-semibold text-gray-600">{weatherData.visibility} km</span>
+                      <span className="font-semibold text-gray-600">
+                        {weatherData.visibility} km
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -264,13 +271,11 @@ const WeatherDashboard = () => {
           </div>
         )}
 
-        {
-          loading && (
-            <div className="flex items-center justify-center h-64">
-              <Loader2Icon className="w-12 h-12 text-blue-600 animate-spin" />
-            </div>
-          )
-        }
+        {loading && (
+          <div className="flex items-center justify-center h-64">
+            <Loader2Icon className="w-12 h-12 text-blue-600 animate-spin" />
+          </div>
+        )}
       </main>
     </div>
   );
