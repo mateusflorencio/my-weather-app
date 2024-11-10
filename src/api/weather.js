@@ -1,6 +1,6 @@
 // api/weather.js
 
-const API_KEY = 'a1317c54c2da4460b9a222944242710'; // Obtenha em weatherapi.com
+const API_KEY = import.meta.env.VITE_WHEATER_API_KEY; // Obtenha em weatherapi.com
 const BASE_URL = 'https://api.weatherapi.com/v1';
 
 export const getWeatherData = async (city) => {
